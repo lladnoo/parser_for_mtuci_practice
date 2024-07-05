@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вакансии</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://i.postimg.cc/yY1sM3yS/gggh.png');
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 20px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            overflow-x: auto;
+            width: 80%;
+            max-width: 1200px;
+            background-color: #343a40;
+            padding: 20px;
+            box-shadow: 0 0 90px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FFFAFA;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 500px;
+            height: 4px;
+            background-color: #B22222;
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .filter-form {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .filter-form .fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .filter-form .field {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-form .field label {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #FFFAFA;
+        }
+
+        .filter-form input {
+            padding: 12px 48px;
+            border: 2px solid #2c3136;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #2c3136;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .filter-form .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .filter-form button {
+            padding: 12px 48px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-form button[type="submit"] {
+            background-color: #B22222;
+            color: #fff;
+        }
+
+        .filter-form button[type="submit"]:hover {
+            background-color: #8B0000;
+        }
+
+        .filter-form button[type="button"] {
+            background-color: #B22222;
+            color: #fff;
+        }
+
+        .filter-form button[type="button"]:hover {
+            background-color: #8B0000;
+        }
+
+        table {
+            color: #ffffff;
+            width: 100%;
+            table-layout: fixed;
+            width: 100%;
+            overflow: auto;
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #2c3136;
+        }
+
+        td a {
+            color: #008080;
+            text-decoration: none;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        .modal,
+        .parsing-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content,
+        .parsing-modal-content {
+            position: relative;
+            background-color: #343a40;
+            padding: 20px;
+            border-radius: 10px;
+            animation: slideIn 0.3s ease-out;
+            color: #fff;
+        }
+        .parsing-modal input {
+            background-color: #2c3136;
+            color: #000;
+            border: 2px solid #2c3136;
+            padding: 12px 48px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .parsing-modal input {
+            background-color: #2c3136;
+            color: #fff;
+            border: 15px solid #2c3136;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .filter-group {
+            position: relative;
+            z-index: 0;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .parsing-modal button[type="submit"] {
+            background-color: #B22222;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            margin-top: 10px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-form button[type="button"]:nth-of-type(2) {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            font-size: 32px;
+        }
+
+        .parsing-modal button[type="submit"]:hover {
+            background-color: #8B0000;
+        }
+
+        .total-vacancies {
+            color: #FFFAFA;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 3px solid #B22222;
+            background-color: #343a40;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: -11px;
+            right: 0;
+            color: #fff;
+            font-size: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #8B0000;
+        }
+
+        a:visited {
+            color: #008080;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>База вакансий Хабр.Карьера</h1>
+
+        <form class="filter-form" method="get" action="/">
+            <div class="fields">
+                <div class="field">
+                    <label for="city">Город:</label>
+                    <input type="text" name="city" id="city">
+                </div>
+                <div class="field">
+                    <label for="position">Должность:</label>
+                    <input type="text" name="position" id="position">
+                </div>
+                <div class="field">
+                    <label for="level">Навыки:</label>
+                    <input type="text" name="level" id="level">
+                </div>
+            </div>
+
+            <div class="parsing-modal">
+                <div class="filter-group">
+                    <label for="filter1" class="filter-label">Filter 1</label>
+                    <input id="filter1" type="text" />
+                </div>
+                <div class="filter-group">
+                    <label for="filter2" class="filter-label">Filter 2</label>
+                    <input id="filter2" type="text" />
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Поиск</button>
+                <button type="button" onclick="showParsingModal()">≡</button>
+                <button type="button" onclick="document.getElementById('infoModal').style.display = 'flex';">Информация</button>
+            </div>
+
+            <div>
+                <b class="total-vacancies">Общее количество найденных вакансий: {{ total_vacancies }}</b>
+            </div>        
+
+        </form>
+
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <h2>Инструкция</h2>
+                <span class="close" onclick="document.getElementById('infoModal').style.display = 'none';">&times;</span>
+                <p>Данный сайт предоставляет доступ ко всем вакансиям Хабр Карьера.</p>
+                <p>Важная информация:</p>
+                <p>Города и должности навыки нужно писать c <u>большой буквы!</u> <i>(Если написать должность с маленькой буквы, будут выданы не все вакансии)</i></p>
+                <b>ПАРСИНГ</b>
+                <p>Нажимая на ≡ Вы открываете настройки парсера. Здесь Вы можете выбрать параметры для добычи данных:</p>
+                <p>1. В графе "Город" можно указать нужные Вам города через запятую <i>(Для удаленной работы следует указать "Можно удаленно")</i>.</p>
+                <p>В этой же графе можно указать желаемый рабочий день <i>("Полный рабочий день" или "Неполный рабочий день")</i>.</P>
+                <p>2. В графе "Должность" следует указывать желаемые должности через запятую <i>(например "Системный администратор")</i>.</p>
+                <p>3. В графе "Навыки" нужно указать Ваш уровень <i>(Senior, Middle, Junior)</i> или же Ваш язык программирования.</p>
+                <p>Если Вы не зададите никаких параметров, то в базу данных будут записаны все вакансии с сайта.</p>
+                <p>Парсинг может длиться более пяти минут. Рекомендуется не взаимодействовать с сайтом в это время.</p>
+                <p>После парсинга требуется обновление базы. Для этого нажмите "Поиск" на главном экране.</p>
+                <b>РАБОТА С БАЗОЙ ДАННЫХ</b>
+                <p>Фильтры в базе данных работают так же как в парсере. Они расположены на главной странице.</p>
+                <p>1. В графе "Город" можно указать нужные Вам города через запятую <i>(Для удаленной работы следует указать "Можно удаленно")</i>.</p>
+                <p>В этой же графе можно указать желаемый рабочий день <i>("Полный рабочий день" или "Неполный рабочий день")</i>.</P>
+                <p>2. В графе "Должность" следует указывать желаемые должности через запятую <i>(например "Системный администратор")</i>.</p>
+                <p>3. В графе "Навыки" нужно указать Ваш уровень <i>(Senior, Middle, Junior)</i> или же Ваш язык программирования.</p>
+                <p>Если Вы не зададите никаких параметров, то в таблице будут отображены все вакансии.</p>
+                <p>За дополнительной помощью обращаться сюда: <a href="https://t.me/lladnno">https://t.me/lladnno</a></p>
+            </div>
+        </div>
+
+        <div id="parsingModal" class="parsing-modal">
+            <div class="parsing-modal-content">
+                <span class="close" onclick="document.getElementById('parsingModal').style.display = 'none';">&times;</span>
+                <h2>Настройка парсера</h2>
+                <form id="parsingForm" onsubmit="startParsing(event)">
+                    <div class="field">
+                        <label for="parseCity">Город:</label>
+                        <input type="text" name="parseCity" id="parseCity">
+                    </div>
+                    <div class="field">
+                        <label for="parsePosition">Должность:</label>
+                        <input type="text" name="parsePosition" id="parsePosition">
+                    </div>
+                    <div class="field">
+                        <label for="parseSkills">Навыки:</label>
+                        <input type="text" name="parseSkills" id="parseSkills">
+                    </div>
+                    <div class="buttons">
+                        <button type="submit">Начать парсинг</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Ссылка</th>
+                <th>Город</th>
+                <th>Должность</th>
+                <th>Навыки</th>
+                <th>Зарплата</th>
+            </tr>
+            {% for vacancy in vacancies %}
+            <tr>
+                <td>{{ vacancy.id }}</td>
+                <td>{{ vacancy.Title }}</td>
+                <td><a href="{{ vacancy.Link }}">Ссылка</a></td>
+                <td>{{ vacancy.City }}</td>
+                <td>{{ vacancy.Position }}</td>
+                <td>{{ vacancy.Level }}</td>
+                <td>{{ vacancy.Salary }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function showParsingModal() {
+            document.getElementById('parsingModal').style.display = 'flex';
+        }
+    
+        function startParsing(event) {
+            event.preventDefault();
+            const parseCity = document.getElementById('parseCity').value;
+            const parsePosition = document.getElementById('parsePosition').value;
+            const parseSkills = document.getElementById('parseSkills').value;
+    
+            fetch('/start-parsing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ city: parseCity, position: parsePosition, skills: parseSkills })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.status === 'success') {
+                        document.getElementById('parsingModal').style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+    </script>
+    
+    
+</body>
+
+</html>
